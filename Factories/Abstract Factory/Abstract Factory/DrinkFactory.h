@@ -8,12 +8,21 @@
 
 struct HotDrink;
 
+/**
+ * 상위 수준에서 다른 종류의 음료를 만들어야 한다면!
+ * 사용 가능한 다양한 팩토리들에 대한 참조를 내부에 가지도록 한다.
+ */
 class DrinkFactory
 {
   map<string, unique_ptr<HotDrinkFactory>> hot_factories;
 public:
   DrinkFactory()
   {
+      /**
+       * 객체 자체가 아니라 스마트 포인터로 저장.
+       * 포인터 대신 객체 값을 직접 저장하면 저장소의 타입에 따라 객체 슬라이싱 문제가 발생할 수 있다?
+       * 객체 슬라이싱? https://stackoverflow.com/questions/274626/what-is-object-slicing
+       */
     hot_factories["coffee"] = make_unique<CoffeeFactory>();
     hot_factories["tea"] = make_unique<TeaFactory>();
   }

@@ -10,6 +10,10 @@
 #include "DrinkFactory.h"
 using namespace std;
 
+/**
+ * 차를 만드는 장비와 커피를 만드는 장비가 달라 한 함수에 넣을 수 없다면?
+ * => 팩토리를 이용하여 각각을 생성하자
+ */
 unique_ptr<HotDrink> make_drink(string type)
 {
   unique_ptr<HotDrink> drink;
