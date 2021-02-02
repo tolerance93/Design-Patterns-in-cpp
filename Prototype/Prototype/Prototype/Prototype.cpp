@@ -81,6 +81,9 @@ struct Contact
     : name{other.name}
     //, address{ new Address{*other.address} }
   {
+      /**
+       * 충분히 범용적이지 않음. 주소의 항목이 바뀐다면 문제가 된다.
+       */
     address = new Address(
       other.address->street,
       other.address->city,
@@ -169,10 +172,16 @@ int main()
   Contact jane2{ jane }; // deep copy
   jane2.address->suite = 555;
 
-  
+    //copy constructor가 불림.
+    Contact temp = john;
+    //assignment operator가 불림.
+    //pointer를 shallow copy하므로 문제 발생!
+    temp = jane2;
+    temp.address->suite = 666;
   std::cout << john << std::endl;
   std::cout << jane << std::endl;
   std::cout << jane2 << std::endl;
+    std::cout << temp << std::endl;
 
   // whenever an address is needed, make a copy
   /*Contact john{ "John Doe", new Address{*addr} };
