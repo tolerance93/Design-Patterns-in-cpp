@@ -5,9 +5,17 @@
 #include <sstream>
 //#include "Person.h"
 using namespace std;
+/**
+ * Serialization: 어떤 객체 데이터를 비트의 나열로 만들어 파일에 저장하거나 네트워크로 전송할 수 있게 하는 것.
+ * 객체를 비트열로 나타내어 온전한 상태로 파일이나 메모리에 쓸 수 있으면, 거꾸로 읽어 들여(deserialize)
+ * 모든 정보와 내부 구성 요소들을 복구할 수 있다. 복제작업과 동일!
+ * C++에는 기본기능으로 제공하지않아 boost 이용
+ */
 #include <boost/serialization/serialization.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 /**
  * 처음부터 모두 새로 객체를 만드는 방법 대신 이미 존재하는 객체를 이용하여 복제하여 사용
@@ -21,7 +29,8 @@ struct Address
   string city;
   int suite;
 
-
+    Address(){}
+    
   Address(const string& street, const string& city, const int suite)
     : street{street},
       city{city},
@@ -46,6 +55,28 @@ struct Address
       << " city: " << obj.city
       << " suite: " << obj.suite;
   }
+    
+private:
+  friend class boost::serialization::access;
+//저장 address앞에 *가 없다!
+    //객체를 구성하는 모든 타입에 serialize()를 구현해야 한다.
+  template <class archive>
+  void save(archive& ar, const unsigned version) const
+  {
+    ar << street;
+    ar << city;
+    ar << suite;
+  }
+//복구
+  template <class archive>
+  void load(archive& ar, const unsigned version)
+  {
+      ar >> street;
+      ar >> city;
+      ar >> suite;
+  }
+    // split member function serialize funcition into save/load
+  BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 
@@ -63,7 +94,7 @@ struct Contact
     return *this;
   }
 
-  Contact() : name(nullptr), address(nullptr)
+  Contact()
   {} // required for serialization
 
   Contact(string name, Address* address)
@@ -94,21 +125,22 @@ struct Contact
 
 private:
   friend class boost::serialization::access;
-
+//저장 address앞에 *가 없다!
+    //객체를 구성하는 모든 타입에 serialize()를 구현해야 한다.
   template <class archive>
   void save(archive& ar, const unsigned version) const
   {
     ar << name;
     ar << address;
   }
-
+//복구
   template <class archive>
   void load(archive& ar, const unsigned version)
   {
     ar >> name;
     ar >> address;
   }
-
+    // split member function serialize funcition into save/load
   BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 public:
@@ -135,17 +167,16 @@ public:
  */
 struct EmployeeFactory
 {
-  static Contact main;
-  static Contact aux;
-
+  
   static unique_ptr<Contact> NewMainOfficeEmployee(string name, int suite)
   {
-    //static Contact p{ "", new Address{ "123 East Dr", "London", 0 } };
+    static Contact main{ "", new Address{ "123 East Dr", "London", 0 } };
     return NewEmployee(name, suite, main);
   }
 
   static unique_ptr<Contact> NewAuxOfficeEmployee(string name, int suite)
   {
+    static Contact aux{ "", new Address{ "123 West Dr", "London", 0 } };
     return NewEmployee(name, suite, aux);
   }
 
@@ -170,6 +201,7 @@ int main()
 
   auto addr = new Address{ "123 East Dr", "London", 0 /* ? */ };
 
+    /*
   Contact john{ "John Doe", addr };
   john.address->suite = 123;
   //Pointer가 shallow copy되어 jane의 값을 변경하면 john의 값도 바뀐다.
@@ -189,6 +221,7 @@ int main()
   std::cout << jane << std::endl;
   std::cout << jane2 << std::endl;
     std::cout << temp << std::endl;
+     */
 
   // whenever an address is needed, make a copy
   /*Contact john{ "John Doe", new Address{*addr} };
@@ -218,9 +251,28 @@ int main()
   // 4. Boost Serialization
 
   // too much work in getting the copying working
+    auto john = EmployeeFactory::NewAuxOfficeEmployee("John Doe", 123);
+    
+    auto clone = [](const Contact& c)
+    {
+        ostringstream oss;
+        boost::archive::text_oarchive oa(oss);
+        oa << c;
+        string s = oss.str();
+        
+        istringstream iss(oss.str());
+        boost::archive::text_iarchive ia (iss);
+        Contact result;
+        ia >> result;
+        return result;
+    };
+    
+    Contact jane = clone(*john);
+    jane.name = "Jane";
+    cout << *john << endl;
+    cout << jane << endl;
+    
   
-
-  //auto john = EmployeeFactory::NewAuxOfficeEmployee("John Doe", 123);
   //auto jane = EmployeeFactory::NewMainOfficeEmployee("Jane Doe", 125);
 
   //cout << *john << "\n" << *jane << "\n"; // note the stars here
