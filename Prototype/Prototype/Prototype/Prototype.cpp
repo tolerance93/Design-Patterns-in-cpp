@@ -125,7 +125,14 @@ public:
       << " works at " << *obj.address; // note the star here
   }
 };
-
+/**
+ * 프로토타입을 저장할 별도의 클래스를 두고 프로토타입의 사용자가 원할 때,
+ * 목적에 맞는 복제본을 요구받는 시점에 만들어 제공
+ *
+ * (1) 모든 항목을 지정받은 생성자 : public
+ * (2) 부분적인 생성자: private + EmployFactory(friend)
+ *  => 미완성된 객체 복제본이 돌아다닐 가능성을 원천적으로 차단!
+ */
 struct EmployeeFactory
 {
   static Contact main;
