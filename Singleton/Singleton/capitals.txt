@@ -1,0 +1,6 @@
+Tokyo
+100
+Korea
+300
+United States
+500
