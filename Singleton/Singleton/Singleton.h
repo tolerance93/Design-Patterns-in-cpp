@@ -96,6 +96,10 @@ public:
   }
 };
 
+/**
+ * SingletonRecordFinder는 SingletonDatabase에 밀접하게 의존한다.
+ * (1) 실제 데이터를 이용해서 테스트해야한다.
+ */
 struct SingletonRecordFinder
 {
   int total_population(std::vector<std::string> names)
