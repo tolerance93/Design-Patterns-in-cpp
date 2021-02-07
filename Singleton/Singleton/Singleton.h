@@ -15,6 +15,9 @@
  * (4) lazy instantiation, thread safety
  */
 
+/**
+ * SingletonDatabase의 기능을 DummyDatabase에서 테스트하기위해 공통적인 인터페이스를 뽑아냄
+ */
 class Database
 {
 public:
@@ -77,6 +80,9 @@ public:
 };
 
 //int SingletonDatabase::instance_count = 0;
+/**
+ * Dependency injection: You can insert dependency instead of actual object
+ */
 
 class DummyDatabase : public Database
 {
@@ -126,5 +132,9 @@ struct ConfigurableRecordFinder
     return result;
   }
 
+    /**
+     * SingletonDatabase나 DummyDatabase가 아니라 Database의 reference를 가짐을 주목할 것!
+     * 언제든 교체 가능
+     */
   Database& db;
 };

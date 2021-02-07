@@ -1,4 +1,4 @@
-#include "Singleton.hpp"
+#include "Singleton.h"
 #include <gtest/gtest.h>
 
 //TEST(DatabaseTests, IsSingletonTest)
@@ -23,6 +23,9 @@ TEST(RecordFinderTests, SingletonTotalPopulationTest)
   EXPECT_EQ(17500000 + 17400000, tp);
 }
 
+/**
+ * Actual Database에 Dependency가 없는 테스트!!
+ */
 TEST(RecordFinderTests, DependantTotalPopulationTest)
 {
   DummyDatabase db{};
