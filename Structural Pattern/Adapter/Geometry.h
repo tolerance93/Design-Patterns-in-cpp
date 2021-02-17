@@ -5,7 +5,9 @@ struct Point
 {
   int x, y;
 
-
+/**
+ * boost hash function
+ */
   friend std::size_t hash_value(const Point& obj)
   {
     std::size_t seed = 0x1E44943F;

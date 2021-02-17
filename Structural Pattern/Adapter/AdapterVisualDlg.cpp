@@ -22,6 +22,7 @@ vector<shared_ptr<VectorObject>> vectorObjects {
 
 /**
  * 선분 하나를 점의 집합으로 만들어 저장하고, 각 점들을 순회할 수 있도록 반복자로 노출한다.
+ * 화면이 업데이트 될 때마다 DrawPoints가 불린다면 같은 것을 계속 새로 생성하는 문제 -> 캐싱!
  */
 struct LineToPointAdapter
 {
@@ -44,6 +45,7 @@ struct LineToPointAdapter
       /**
        * 사각형을 그리기때문에 수평/수직선만 표현한다.
        * 선분 -> 점 변환이 생성자에서 일어난다. 성급한 접근법!
+       * 어댑터 생성 즉시 변환 작업을 하는 것이 아니라, 실 사용 시점에 변환 작업이 수행되도록(lazy) 접근법도 생각해 보자.
        */
     if (dx == 0)
     {
@@ -68,6 +70,9 @@ private:
   Points points;
 };
 
+/**
+ * 캐싱 추가
+ */
 struct LineToPointCachingAdapter
 {
   typedef vector<Point> Points;
@@ -76,6 +81,9 @@ struct LineToPointCachingAdapter
   {
     boost::hash<Line> hash;
     line_hash = hash(line);
+      /**
+       * 캐시에 존재하면 변환하지 않음
+       */
     if (cache.find(line_hash) != cache.end()) return;
 
     static int count = 0;
@@ -107,7 +115,10 @@ struct LineToPointCachingAdapter
         points.emplace_back(Point{ x, top });
       }
     }
-
+/**
+ * 캐시에 삽입
+ * 더이상 필요 없어진 오래된 점은 어떻게 처리할까?
+ */
     cache[line_hash] = points;
   }
 
@@ -115,6 +126,9 @@ struct LineToPointCachingAdapter
   virtual Points::iterator end() { return cache[line_hash].end(); }
 private:
   size_t line_hash;
+    /**
+     * 캐시를 들고 있음
+     */
   static map<size_t, Points> cache;
 };
 
@@ -255,6 +269,7 @@ void CAdapterVisualDlg::OnPaint()
            * 그림을 그리기위한 인터페이스는 DrawPoints밖에 없어서 Adapter가 필요!
            * 기하 도형에서 선분 집합을 정의하면 그 선분들로 lpo를 생성하여 점들의 집합으로 변환하고, 그 점들을 순회할 수 있는
            * 시작 반복자와 끝  반복자를 DrawPoints에 넘겨주어 그림을 그린다.
+           * 스택에 어댑터를 생성하면 함수가 종료될때 사라지지 않을까? 캐시가 무의미할텐데... => cache가 static variable!!
            */
         LineToPointCachingAdapter lpo{ l };
         DrawPoints(dc, lpo.begin(), lpo.end());
