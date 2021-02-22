@@ -1,5 +1,9 @@
 // pimpl.h
 
+/**
+ * pimpl pre package
+ */
+
 #include <memory>
 
 template <typename T> class pimpl
