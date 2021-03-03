@@ -108,6 +108,9 @@ struct TransparentShape : Shape
 };
 
 // mixin inheritance
+/**
+ * static decorator goes here
+ */
 
 // note: class, not typename
 template <typename T> struct ColoredShape2 : T
