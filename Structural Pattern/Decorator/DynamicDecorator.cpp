@@ -110,14 +110,19 @@ struct TransparentShape : Shape
   }
 };
 
-// mixin inheritance
 /**
  * static decorator goes here
+ * mixin inheritance: 템플릿 인자로 받은 클래스를 부모 클래스로 지정하는 방식
  */
+// mixin inheritance
+
 
 // note: class, not typename
 template <typename T> struct ColoredShape2 : T
 {
+    /**
+     * Shape이외의 타입이 지정되는 것을 막는다.
+     */
   static_assert(is_base_of<Shape, T>::value,
     "Template argument must be a Shape");
 
@@ -146,6 +151,10 @@ template <typename T> struct TransparentShape2 : T
 {
   uint8_t transparency;
 
+    /**
+     * 첫번째 인자는 템플릿 클래스에 적용, 두번째 인자들은 부모 클래스에 전달될 제네릭 파라미터 팩
+     * 임의의 개수의 인자를 받을 수 있다. 앞쪽 인자는 투명도 값을 초기화하는 데 이용되고, 나머지 인자들은 그 인자가 어떻게 구성되었냐와 관계없이 단순히 상위 클래스에 전달된다.
+     */
   template<typename...Args>
   TransparentShape2(const uint8_t transparency, Args ...args)
     : T(std::forward<Args>(args)...), transparency{ transparency }
