@@ -22,6 +22,9 @@ struct Circle : Shape
   {
   }
 
+    /**
+     * resize는 shape에 없기 때문에, 데커레이터에서 호출할 수 없다.
+     */
   void resize(float factor)
   {
     radius *= factor;
