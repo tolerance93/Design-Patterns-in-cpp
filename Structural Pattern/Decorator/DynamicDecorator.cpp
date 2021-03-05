@@ -198,6 +198,9 @@ void mixin_inheritance()
   cout << blue_invisible_square.str() << endl;
 }
 
+/**
+ * Functional Decorator goes here
+ */
 struct Logger
 {
   function<void()> func;
