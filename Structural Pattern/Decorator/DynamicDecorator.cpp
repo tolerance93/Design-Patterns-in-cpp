@@ -200,6 +200,7 @@ void mixin_inheritance()
 
 /**
  * Functional Decorator goes here
+ * 로깅 기능을 분리하여 다른 부분과 얽히지 않고 재사용과 개선을 마음편히 하자.
  */
 struct Logger
 {
