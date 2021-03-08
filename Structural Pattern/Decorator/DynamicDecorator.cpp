@@ -221,6 +221,11 @@ struct Logger
   }
 };
 
+/**
+ * 코드 블록을 std::function으로서 전달하지 않고 템플릿 인자로 전달할 경우
+ * 임의의 코드 블럭을 데커레이션할 수 있고, 데커레이션된 코드 블록을 필요할 때 호출할 수 있다.
+ */
+
 template <typename Func>
 struct Logger2
 {
@@ -247,6 +252,9 @@ template <typename Func> auto make_logger2(Func func,
   return Logger2<Func>{ func, name }; 
 }
 
+/**
+ * 로그를 남기고 싶은 함수의 리턴 값을 넘겨야 할 경우
+ */
 // need partial specialization for this to work
 template <typename> struct Logger3;
 
@@ -272,6 +280,7 @@ struct Logger3<R(Args...)>
   string name;
 };
 
+//std::function대신에 일반 함수 포인터를 첫번째 인자로 받고 있다.
 template <typename R, typename... Args>
 auto make_logger3(R (*func)(Args...), const string& name)
 {
