@@ -90,6 +90,11 @@ void naive_flyweight()
   User::info();
 }
 
+/**
+ * 위와 같은 caching은 보편적으로 사용되는 것이어서 부스트 라이브러리에도 있다.
+ * bimap을 사용하지 않고 아래와 같이 부스트 라이브러리를 활용하면 간단히 flyweight를 구현할 수 있다.
+ */
+
 struct User2
 {
   // users share names! e.g., John Smith
