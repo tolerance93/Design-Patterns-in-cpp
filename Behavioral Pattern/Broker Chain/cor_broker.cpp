@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <string>
 using namespace std;
 #include <boost/signals2.hpp>
@@ -20,7 +20,7 @@ struct Query
   }
 };
 
-struct Game // mediator
+struct Game // mediator Design Pattern
 {
   signal<void(Query&)> queries;
 };
