@@ -7,6 +7,11 @@
 using namespace std;
 #include <boost/lexical_cast.hpp>
 
+/**
+ * 뭔가 빠뜨린 것이 있을 때 렉서나 파서는 무언가 의미 있는 것을 만날 때까지 잘못된 코드를 그냥 넘겨버린다.
+ * 특히 정적 도구들이 이러한 접근법을 취한다. 그렇게 해야만 실시간으로 타이핑하고 있는 미완성 코드에서도 의미 있게 동작할 수 있다.
+ */
+
 // lexing =================================================
 /**
  * 문자열 입력을 토큰이라 불리는 단위로 나누어 나열한다. 토큰은 어떤 문법상에서 의미를 가지는 최소 단위.
@@ -75,6 +80,10 @@ vector<Token> lex(const string& input)
 }
 
 // parsing =====================================================
+/**
+ * 파싱은 토큰의 나열을 의미 있는 단위로 바꾼다.
+ * 토큰 정의 트리에서 최상단에 추상 부모 타입을 두면 편리하다.
+ */
 
 struct Element
 {
@@ -105,6 +114,10 @@ struct BinaryOperation : Element
   }
 };
 
+/**
+ * 트리를 만드는 코드.
+ * 숫자의 경우 표현식의 왼쪽에 위치해야 할지 오른쪽에 위치해야 할 지 알 수 가 없다.  have_lhs변수를 두어 어느쪽에 위치해야하는지 기록을 두어 활용.
+ */
 unique_ptr<Element> parse(const vector<Token>& tokens)
 {
   auto result = make_unique<BinaryOperation>();
