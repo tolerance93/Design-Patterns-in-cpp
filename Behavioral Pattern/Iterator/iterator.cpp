@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <memory>
@@ -7,7 +7,9 @@
 using namespace std;
 
 #include "recursive_generator.h"
-
+/**
+ * Binary Search Traversal
+ */
 template <typename T> struct BinaryTree;
 
 // todo: refactor to refer to parent instead of entire tree
