@@ -77,6 +77,9 @@ template <typename T> struct BinaryTree
     }
 
     // no continuations in C++ (unlike C#)
+      /**
+       * 순회는 ++연산자로 이루어져야 하기 때문에 재귀 상태를 기억하면서 순회가 진행되어야 한다.
+       */
     PreOrderIterator<U>& operator++() 
     {
       if (current->right)
@@ -98,6 +101,9 @@ template <typename T> struct BinaryTree
       return *this;
     }
 
+      /**
+       * 연산자 오버로딩을 통해 dereferencing연산으로 Node 리턴
+       */
     Node<U>& operator*() { return *current; }
   };
 
