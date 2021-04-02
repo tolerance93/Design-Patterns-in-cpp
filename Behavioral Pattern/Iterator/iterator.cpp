@@ -79,6 +79,7 @@ template <typename T> struct BinaryTree
     // no continuations in C++ (unlike C#)
       /**
        * 순회는 ++연산자로 이루어져야 하기 때문에 재귀 상태를 기억하면서 순회가 진행되어야 한다.
+       * 호출 간의 스택을 보존할 수 없기 때문에 재귀호출이 불가능하다.
        */
     PreOrderIterator<U>& operator++() 
     {
@@ -144,6 +145,11 @@ template <typename T> struct BinaryTree
 
 private:
   // or use a recursive_generator
+    /**
+     * 코루틴
+     * 호출 중간에 중간 결과를 넘겨준 후 순회를 중단하고 중간 결과에 대한 작업이 끝난 후 순회를 재개할 수 있다면?
+     * 재시작 가능한 함수라면 올바르게 재귀 호출할 수 있을까?
+     */
   experimental::generator<Node<T>*> post_order_impl(Node<T>* node)
   {
     if (node)
