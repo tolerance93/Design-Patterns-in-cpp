@@ -71,6 +71,8 @@ public:
 
   void restore(const shared_ptr<Memento>& m)
   {
+      // 아무것도 하지 않는 기능을 제공하기위해서 m null check
+      // 복구로 인한 작업도 리스트에 추가. 복구도 Undo/Redo가능
     if (m)
     {
       balance = m->balance;
@@ -88,7 +90,7 @@ public:
       balance = m->balance;
       return m;
     }
-    return{};
+    return{}; // 공백 포인터를 리턴. 아무것도 하지 ㅇ낳음
   }
 
   shared_ptr<Memento> redo()
