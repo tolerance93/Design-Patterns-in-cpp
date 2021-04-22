@@ -10,19 +10,30 @@ class Person : public Observable<Person>// observable
 {
     int age;
 public:
-    
+    Person() {}
     Person(int age) : age(age) {}
     
+    //종속성이 생길 경우 유지보수가 대단히 어려워짐
     void set_age(int age)
     {
         if (this->age == age) return;
+        
+        auto old_can_vote = get_can_vote();
         this->age = age;
         notify(*this, "age");
+        
+        if (old_can_vote != get_can_vote())
+            notify(*this, "can_vote");
     }
     
     int get_age() const
     {
         return age;
+    }
+    //setter가 없을 경우 notify()가 여기에 디펜던시를 가짐. 많아질 경우 매우 복잡한 디펜던시 관계가 생길 수 있음.
+    // 현재 can_vote가 age에 종속성을 가지는 상황
+    bool get_can_vote() const {
+        return age >= 16;
     }
 };
 
@@ -34,6 +45,8 @@ private:
     {
         cout << "Person's " << field_name << " has changed to ";
         if (field_name == "age") cout << source.get_age();
+        if (field_name == "can_vote")
+            cout << boolalpha << source.get_can_vote();
         cout << "\n";
     }
 };
@@ -77,7 +90,14 @@ int main(int argc, const char * argv[]) {
     person.unsubscribe(cpo);
     person.set_age(13);
      */
+    Person p;
+    ConsolePersonObserver cpo;
+    p.subscribe(cpo);
+    p.set_age(15);
+    p.set_age(16);
+     
     
+    /*
     //boost
     Person2 p2;
     //subscribe boost signal은 옵저버가 따로 필요없다. 람다함수 이용
@@ -89,6 +109,6 @@ int main(int argc, const char * argv[]) {
     );
     p2.set_age(20);
     conn.disconnect(); // unsubscribe;
-    
+    */
     return 0;
 }
