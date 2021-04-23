@@ -2,11 +2,12 @@
 #include <iostream>
 #include "Observable.h"
 #include <boost/signals2.hpp>
+#include "SaferObservable.h"
 
 using namespace std;
 using namespace boost;
 
-class Person : public Observable<Person>// observable
+class Person : public SaferObservable<Person>// observable
 {
     int age;
 public:
@@ -75,6 +76,26 @@ public:
 
 #include <iostream>
 
+struct TrafficAdministration : Observer<Person>
+{
+    void field_changed(Person &source, const std::string &field_name) override
+    {
+        if (field_name == "age")
+        {
+            if (source.get_age() < 17)
+            {
+                cout << "whoa there, you're not old enough to drive!\n";
+            }
+            else
+            {
+                cout << "Oh, ok. we no longer care!\n";
+                source.unsubscribe(*this);
+            }
+        }
+    }
+    
+};
+
 int main(int argc, const char * argv[]) {
     /*
     Person person{10};
@@ -90,12 +111,20 @@ int main(int argc, const char * argv[]) {
     person.unsubscribe(cpo);
     person.set_age(13);
      */
+    
     Person p;
-    ConsolePersonObserver cpo;
-    p.subscribe(cpo);
+    TrafficAdministration ta;
+    p.subscribe(ta);
+    
     p.set_age(15);
     p.set_age(16);
-     
+    try {
+        p.set_age(17);
+    } catch (const std::exception& e) {
+        //not reached why?
+        cout << "Oops, " << e.what() << "\n";
+    }
+   
     
     /*
     //boost
